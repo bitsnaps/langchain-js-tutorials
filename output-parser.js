@@ -1,4 +1,5 @@
-import { ChatOpenAI } from "@langchain/openai";
+// import { ChatOpenAI } from "@langchain/openai";
+import { HuggingFaceInference } from "@langchain/community/llms/hf";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import {
   CommaSeparatedListOutputParser,
@@ -13,9 +14,16 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 // Instantiate the model
-const model = new ChatOpenAI({
-  modelName: "gpt-3.5-turbo",
-  temperature: 0.9,
+// const model = new ChatOpenAI({
+//   modelName: "gpt-3.5-turbo",
+//   temperature: 0.9,
+// });
+const model = new HuggingFaceInference({
+  model: "NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO", // OK
+  // model: "mistralai/Mixtral-8x7B-Instruct-v0.1", // OK when providing a longer context tokens
+  apiKey: process.env.HUGGINGFACEHUB_API_KEY, // In Node.js defaults to process.env.HUGGINGFACEHUB_API_KEY
+  temperature: 0.7, // default
+  maxTokens: 60 // (default: 50)
 });
 
 async function callStringOutputParser() {
@@ -84,8 +92,8 @@ async function callZodStructuredParser() {
   });
 }
 
-// const response = await callStringOutputParser();
+const response = await callStringOutputParser();
 // const response = await callListOutputParser();
 // const response = await callStructuredParser();
-const response = await callZodStructuredParser();
+// const response = await callZodStructuredParser();
 console.log(response);
